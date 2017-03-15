@@ -1,0 +1,21 @@
+<ui:composition template="/WEB-INF/templates/appTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml" xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich">
+
+	<ui:define name="stylesheet">
+    	<link rel="stylesheet" type="text/css" href="#{facesContext.externalContext.requestContextPath}/css/maintenance.css" />
+  	</ui:define>
+  	
+	<ui:define name="title"></ui:define>
+	
+	<ui:define name="content">
+		<h:head>
+ 		</h:head>
+		<body>
+			<div class="maint_h4"><h1>Loading, please wait.</h1></div>
+		</body>
+	</ui:define>
+	
+</ui:composition>

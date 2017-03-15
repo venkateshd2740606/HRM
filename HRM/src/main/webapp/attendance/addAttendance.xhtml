@@ -1,0 +1,162 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<a4j:outputPanel id="attendancePanel">
+	
+		<br />
+		<br />
+				
+			<h:panelGroup>
+				<h:outputText value="Select Date" />
+					<rich:calendar value="#{attendanceBean.selectedDate}"
+						id="calendar" popup="true" datePattern="dd/MM/yyyy"
+						showApplyButton="false" cellWidth="24px" cellHeight="22px" styleClass="123">
+							<a4j:ajax event="change" listener="#{attendanceBean.updateStatus}" execute="@all"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide();" 
+							render="attendancePanel" >
+							</a4j:ajax>
+					</rich:calendar>
+			</h:panelGroup>	
+			<h:panelGroup>
+				</h:panelGroup>
+				<a4j:commandButton id="unSubmit" value="Un Submit" action="#{attendanceBean.unSubmit}" rendered="#{baseBean.role == 'admin' || baseBean.role == 'hr'}" 
+					style="width:100px;margin-left:1%;"
+					onbegin="#{rich:component('loadingModal')}.show();"
+					oncomplete="#{rich:component('loadingModal')}.hide();#{rich:component('message_panel')}.show();"
+					render="message_panel,attendanceTable,submit,unSubmit"
+					styleClass="btn btn-sm btn-info"
+					disabled="#{!attendanceBean.submitDisabled}">
+				</a4j:commandButton>
+				
+				<a4j:commandButton id="submit" value="Submit" action="#{attendanceBean.saveAll}"
+					style="width:100px;margin-left:1%;"
+					onbegin="#{rich:component('loadingModal')}.show();"
+					oncomplete="#{rich:component('loadingModal')}.hide();#{rich:component('message_panel')}.show();"
+					render="message_panel,attendanceTable,unSubmit,submit"
+					styleClass="btn btn-sm btn-info"
+					disabled="#{attendanceBean.submitDisabled}">
+				</a4j:commandButton>
+				
+
+			<br />
+			<br />
+			<a4j:outputPanel id="attendanceTablePanel">
+				<h:dataTable id="attendanceTable" 
+				value="#{attendanceBean.attendances}"
+				var="attendance" border="1" style="width:100%;">
+
+				<h:column headerClass="width15Percent">
+					<f:facet name="header">
+						<h:outputText value="Employee Name" />
+					</f:facet>
+					<b><h:outputText value="#{attendance.employee.empFirstName} #{attendance.employee.empLastName}"
+						title="#{attendance.employee.empFirstName} #{attendance.employee.empLastName}" /></b>
+				</h:column>
+
+				<h:column headerClass="width15Percent" >
+					<f:facet name="header">
+						<h:outputText value="In-Time" />
+					</f:facet>
+					<h:panelGroup>
+						<h:outputText value="  H:  " />
+						<h:selectOneMenu id="inhour" styleClass="form-control select" style="width:60px;"
+							value="#{attendance.inHour}" disabled="#{attendanceBean.submitDisabled}">
+							<f:selectItems value="#{attendanceBean.hoursList}" var="inhrs"
+								itemLabel="#{inhrs}" itemValue="#{inhrs}" />
+							<a4j:ajax event="change" listener="#{attendanceBean.updateHours(attendance)}"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide(); if (#{attendanceBean.hasErrors} == true) {#{rich:component('message_panel')}.show();}"
+							render="message_panel,hours" />
+					</h:selectOneMenu>
+					</h:panelGroup>
+					<h:panelGroup style="margin-left:5px;">
+						<h:outputText value="  M:  " />
+						<h:selectOneMenu id="inminute" styleClass="form-control select" style="width:60px;"
+							value="#{attendance.inMinute}" disabled="#{attendanceBean.submitDisabled}">
+							<f:selectItems value="#{attendanceBean.minutesList}"
+								var="inmin" itemLabel="#{inmin}" itemValue="#{inmin}" />
+								<a4j:ajax event="change" listener="#{attendanceBean.updateHours(attendance)}"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide(); if (#{attendanceBean.hasErrors} == true) {#{rich:component('message_panel')}.show();}"
+							render="message_panel,hours" />
+						</h:selectOneMenu>
+					</h:panelGroup>
+				</h:column>
+
+				<h:column headerClass="width15Percent">
+					<f:facet name="header">
+						<h:outputText value="Out-Time" />
+					</f:facet>
+					<h:panelGroup style="margin-left:5px;">
+						<h:outputText value="  H:  " />
+						<h:selectOneMenu id="outhour" styleClass="form-control select" style="width:60px !important;"
+							value="#{attendance.outHour}" disabled="#{attendanceBean.submitDisabled}">
+							<f:selectItems value="#{attendanceBean.hoursList}"
+								var="outhrs" itemLabel="#{outhrs}" itemValue="#{outhrs}" />
+								<a4j:ajax event="change" listener="#{attendanceBean.updateHours(attendance)}"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide(); if (#{attendanceBean.hasErrors} == true) {#{rich:component('message_panel')}.show();}"
+							render="message_panel,hours" />
+						</h:selectOneMenu>
+					</h:panelGroup>
+					<h:panelGroup style="margin-left:5px;">
+						<h:outputText value="  M:  " />
+						<h:selectOneMenu id="outminute" styleClass="form-control select" style="width:60px !important;"
+							value="#{attendance.outMinute}" disabled="#{attendanceBean.submitDisabled}">
+							<f:selectItems value="#{attendanceBean.minutesList}"
+								var="outmin" itemLabel="#{outmin}" itemValue="#{outmin}" />
+							<a4j:ajax event="change" listener="#{attendanceBean.updateHours(attendance)}"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide(); if (#{attendanceBean.hasErrors} == true) {#{rich:component('message_panel')}.show();}"
+							render="message_panel,hours" />
+						</h:selectOneMenu>
+					</h:panelGroup>
+				</h:column>
+
+				<h:column headerClass="width5Percent">
+					<f:facet name="header">
+						<h:outputText value="Hours" />
+					</f:facet>
+					<b><h:outputText value="#{attendance.hours}" id="hours" >
+						<f:convertNumber minFractionDigits="2"/>
+					</h:outputText></b>
+				</h:column>
+
+				<h:column headerClass="width12Percent">
+					<f:facet name="header">
+						<h:outputText value="Status" />
+					</f:facet>
+					<h:selectOneMenu id="status" styleClass="form-control select" style="width:150px;"
+						value="#{attendance.status}" disabled="#{attendanceBean.submitDisabled}">
+						<f:selectItems value="#{attendanceBean.attendanceStatusList}" var="sts"
+							itemLabel="#{sts}" itemValue="#{sts}" />
+							<!-- <a4j:ajax event="change" listener="#{attendanceBean.resetAttendance(attendance)}"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide();"
+							render="attendanceTablePanel" /> -->
+					</h:selectOneMenu>
+				</h:column>
+
+				<h:column headerClass="width20Percent">
+					<f:facet name="header">
+						<h:outputText value="Comments" />
+					</f:facet>
+					<h:inputTextarea value="#{attendance.comments}" styleClass="form-control" rendered="#{!attendanceBean.submitDisabled}"
+						id="comments" readonly="#{attendanceBean.submitDisabled}"/>
+					<h:outputLabel value="  #{attendance.comments}" rendered="#{attendanceBean.submitDisabled}"></h:outputLabel>	
+				</h:column>
+				
+			</h:dataTable>
+			</a4j:outputPanel>
+			
+
+		<br></br>
+	</a4j:outputPanel>	
+</ui:composition>

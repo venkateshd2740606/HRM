@@ -1,0 +1,15 @@
+package peristence.test
+
+import java.util.*;
+import com.kstrata.apps.hrm.model.Holiday;
+
+global com.kstrata.apps.hrm.service.impl.DroolsServiceUtil droolsServiceUtil;
+
+rule "Test"
+	agenda-group "test"
+	when
+		holidays : List()
+		eval( true ) 
+	then
+		System.out.println("--------------------------Testing------------------------holidays : " + holidays.size());
+end

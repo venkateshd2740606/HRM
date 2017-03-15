@@ -1,0 +1,200 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+		<script type="text/javascript">
+	    // <![CDATA[
+	     function disableBeforeToday(day) {
+	    	var curDt = #{rich:component('dateStartCalendar')}.selectedDate;
+	        return (curDt.getTime() - day.date.getTime() < 0);
+	    }
+	    // ]]>
+	</script>
+
+
+		<a4j:outputPanel name="applyLeaveForm" id="applyLeaveFormId">
+		<a4j:commandButton value="Submit" action="#{applyLeaveBean.save}" 
+				style="width:100px;margin-left:90%;"
+				onbegin="#{rich:component('loadingModal')}.show();"
+				oncomplete="#{rich:component('loadingModal')}.hide();#{rich:component('message_panel')}.show();"
+				render="message_panel,applyLeaveFormId"
+				styleClass="btn btn-sm btn-info">
+				<!-- <a4j:jsFunction name="submit" action="#{applyLeaveBean.save}" render="message_panel,applyLeaveFormId" oncomplete="#{rich:component('message_panel')}.show();"/> -->
+		</a4j:commandButton>
+			
+		<a4j:outputPanel id="selectEmpAndLeaveBal"  style="width:100%;display: inline-block;">
+			<a4j:outputPanel id="selectEmp" style="display:inline-block;width: 43%;" rendered="#{baseBean.role == 'admin'}">
+				<h:outputLabel value="Select Employee" style="font-weight: normal !important;"/>
+				<h:selectOneMenu styleClass="form-control select" style="width:60% !important;margin-left:10px;" 
+					value="#{applyLeaveBean.selectedEmployee}">
+					<f:selectItems value="#{applyLeaveBean.employeesForSelect}" />
+					<a4j:ajax event="change" listener="#{applyLeaveBean.loadEmployee}" render="appliedLeavesPanel,leavesListingForm,singleEmployeeLeaves,leaveBalanceReportId,leaveBalPanelGrid"
+					onbegin="#{rich:component('loadingModal')}.show();" oncomplete="#{rich:component('loadingModal')}.hide();"/>
+				</h:selectOneMenu>
+			</a4j:outputPanel>
+			
+			<a4j:outputPanel id="leaveBalPanel" style="display:inline-block;float:right;margin-right:27%;">
+				<h:panelGrid columns="2" id="leaveBalPanelGrid" columnClasses="leave_balance_col" >
+					<h:outputLabel value="Annual Leave Balance " />
+					<h:outputLabel value="#{applyLeaveBean.selectedEmp.annualLeaveBal}" rendered="#{baseBean.role == 'admin'}"><f:convertNumber pattern="#0.0" /></h:outputLabel>
+					<h:outputLabel value="#{applyLeaveBean.employee.annualLeaveBal}" rendered="#{baseBean.role != 'admin'}"><f:convertNumber pattern="#0.0" /></h:outputLabel>
+					<h:outputLabel value="Sick Leave Balance " />
+					<h:outputLabel value="#{applyLeaveBean.selectedEmp.sickLeaveBal}" rendered="#{baseBean.role == 'admin'}"/>
+					<h:outputLabel value="#{applyLeaveBean.employee.sickLeaveBal}" rendered="#{baseBean.role != 'admin'}"/>
+				</h:panelGrid>
+			</a4j:outputPanel>
+		
+		</a4j:outputPanel>
+		
+		<br />	
+		<br />	
+		
+		<a4j:outputPanel id="fields" styleClass="width100Percent">
+				<h:panelGrid columns="2" style="margin-left: 10px ! important; display: inline-block; width: 30%;height: 111px;">
+
+					<h:outputText value="Leave Type*" />
+					<h:selectOneMenu id="leaveType" value="#{applyLeaveBean.selectedLeaveType}" style="width:100%" styleClass="form-control select">
+						<f:selectItems value="#{applyLeaveBean.leaveProjectConstantsMap.entrySet()}"
+							var="type" itemLabel="#{type.value.name}" itemValue="#{type.key}" />
+					</h:selectOneMenu>
+
+					<h:outputText value="Start Date*" />
+					<a4j:outputPanel layout="block">
+						<rich:calendar value="#{applyLeaveBean.employeeLeave.dateStart}"
+							id="dateStartCalendar" datePattern="dd/MM/yyyy" style="width:200px">
+							<a4j:ajax event="change" render="dateEndCalendar"
+								listener="#{applyLeaveBean.showEndDate}" />
+						</rich:calendar>
+					</a4j:outputPanel>
+
+					<h:outputText value="End Date*" />
+					<a4j:outputPanel layout="block">
+						<rich:calendar value="#{applyLeaveBean.employeeLeave.dateEnd}" 
+							id="dateEndCalendar" datePattern="dd/MM/yyyy"
+							style="width:200px"> 
+							<a4j:ajax event="change" render="days" execute="@form"
+								listener="#{applyLeaveBean.updateDays}" />
+						</rich:calendar>
+					</a4j:outputPanel>
+
+					<h:outputText value="Days" />
+					<h:inputText id="days" value="#{applyLeaveBean.days}" styleClass="form-control ro parsley-validated"
+						disabled="true" readonly="true" />
+				</h:panelGrid>
+
+				<h:panelGrid style="margin-left:100px !important;display: inline-block;">
+					<h:outputText value="Reason*" style="display: inline-block;"/>
+					<h:inputTextarea id="commentsTextArea" value="#{applyLeaveBean.reason}" cols="60" rows="5" 
+					style="display: inline-block;height:90px;" styleClass="form-control" />
+				</h:panelGrid>
+
+				<h:panelGrid></h:panelGrid>
+				<h:panelGrid></h:panelGrid>
+			</a4j:outputPanel>
+			
+			<br />	
+			<br />	
+			
+			<!-- <rich:popupPanel id="confirmation" modal="true" resizeable="true" onmaskclick="#{rich:component('popup')}.hide()" width="200" height="100">
+				<f:facet name="header">
+					<h:outputText value="Confirmation" />
+				</f:facet>
+				<f:facet name="controls">
+					<h:outputLink value="#" onclick="#{rich:component('confirmation')}.hide(); return false;">
+              				X
+        			</h:outputLink>
+				</f:facet>
+				<h:panelGrid>
+				<h:panelGrid columns="2">
+					<h:outputText value="Are you sure?" style="FONT-SIZE: large;" />
+				</h:panelGrid>
+				<br />
+				<h:panelGroup style="margin-left:10px;">
+					<input type="button" value="OK" onclick="#{rich:component('confirmation')}.hide();submit();return false" />
+					<input type="button" value="Cancel" onclick="#{rich:component('confirmation')}.hide();return false" />
+				</h:panelGroup>
+			</h:panelGrid>
+			</rich:popupPanel> -->
+
+			<br />
+			<br />
+			<br />
+			
+			<a4j:outputPanel id="appliedLeavesPanel" rendered="#{applyLeaveBean.employeeLeaves.size() ne 0}">
+			
+				<h:dataTable id="appliedLeavesDataTable" value="#{applyLeaveBean.employeeLeaves}" 
+				var="employeeLeave" rowClasses="leave_dt_col" columnClasses="leave_dt_col" 
+				rendered="#{not empty applyLeaveBean.employeeLeaves}" 
+					border="1" style="width:100%;">
+
+					<h:column headerClass="leave_dt_header width7Percent">
+						<f:facet name="header">
+							<h:outputText value="From" />
+						</f:facet>
+						<h:outputText value="#{employeeLeave.startDate}" title="#{employeeLeave.startDate}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+					</h:column>
+	
+					<h:column headerClass="leave_dt_header width7Percent">
+						<f:facet name="header">
+							<h:outputText value="To" />
+						</f:facet>
+						<h:outputText value="#{employeeLeave.endDate}" title="#{employeeLeave.endDate}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+					</h:column>
+	
+					<h:column headerClass="leave_dt_header width10Percent">
+						<f:facet name="header">
+							<h:outputText value="LeaveType" />
+						</f:facet>
+						<h:outputText value="#{employeeLeave.leaveProjectConstant.name}"
+							title="#{employeeLeave.leaveProjectConstant.name}" />
+					</h:column>
+	
+					<h:column headerClass="leave_dt_header width15Percent">
+						<f:facet name="header">
+							<h:outputText value="Reason" />
+						</f:facet>
+						<h:outputText value="#{employeeLeave.reasonString}" style="width:150px;"
+							title="#{employeeLeave.reasonString}" />
+					</h:column>
+	
+					<h:column headerClass="leave_dt_header width5Percent">
+						<f:facet name="header">
+							<h:outputText value="Total Days" />
+						</f:facet>
+						<h:outputText value="#{employeeLeave.days}"
+							title="#{employeeLeave.days}" />
+					</h:column>
+	
+					<h:column headerClass="leave_dt_header width5Percent">
+						<f:facet name="header">
+							<h:outputText value="Status" />
+						</f:facet>
+						<h:outputText value="#{employeeLeave.statusProjectConstant.name}"
+							title="#{employeeLeave.statusProjectConstant.name}" />
+					</h:column>
+	
+					<h:column headerClass="leave_dt_header width5Percent">
+						<h:graphicImage alt="Delete" url="/images/delete.png" style="cursor:pointer">
+							<a4j:ajax event="click" listener="#{applyLeaveBean.deleteEmployeeLeave(employeeLeave)}"
+							    onbeforesubmit="if(!confirm('Delete this leave?')) return false"
+								onbegin="#{rich:component('loadingModal')}.show();"
+								oncomplete="#{rich:component('loadingModal')}.hide();" render="applyLeaveFormId"/>
+						</h:graphicImage>
+						<h:graphicImage alt="Edit" url="/images/edit.png" style="cursor:pointer">
+							<a4j:ajax event="click" listener="#{applyLeaveBean.editEmployeeLeave(employeeLeave.id)}"
+								onbegin="#{rich:component('loadingModal')}.show();"
+								oncomplete="#{rich:component('loadingModal')}.hide();" render="applyLeaveFormId"/>
+						</h:graphicImage>
+					</h:column>
+				</h:dataTable>
+				
+			</a4j:outputPanel>
+			
+			
+		</a4j:outputPanel>
+</ui:composition>

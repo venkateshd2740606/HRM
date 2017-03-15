@@ -1,0 +1,194 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+		<h:form id="employeeDetailsForm">
+
+			<rich:tabPanel switchType="client">
+				<rich:tab header="Details">
+					<h:panelGrid columns="2">
+
+						<h:outputLabel value="Employee ID" />
+						<h:inputText value="#{employeeDetailsBean.employeeID}" />
+
+						<h:outputLabel value="First Name">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.firstName}" />
+
+						<h:outputLabel value="Middle Name">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.middleName}" />
+
+						<h:outputLabel value="Surname">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.surname}" />
+
+						<h:outputLabel value="Employee Designation" />
+						<h:inputText value="#{employeeDetailsBean.employeeDesignation}" />
+
+						<h:outputLabel value="Company Employee ID" />
+						<h:inputText value="#{employeeDetailsBean.companyEmailID}" />
+
+						<h:outputLabel value="Report to" />
+						<h:inputText value="#{employeeDetailsBean.reportTo}" />
+
+						<h:outputLabel value="Joining Date" />
+						<a4j:outputPanel layout="block">
+							<rich:calendar value="#{employeeDetailsBean.joiningDate}"
+								id="joiningDate" datePattern="dd/MM/yyyy HH:mm"
+								styleClass="calendarStyle">
+								<!-- <a4j:ajax event="change" render="dateEndCalendar" listener="#{applyLeaveBean.showEndDate}" /> -->
+							</rich:calendar>
+						</a4j:outputPanel>
+
+					</h:panelGrid>
+				</rich:tab>
+
+				<rich:tab header="My Documents">
+					<h:panelGrid columns="2">
+
+						<h:outputLabel value="Residential Address">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputTextarea
+							value="#{employeeDetailsBean.residentialAddress}" />
+
+						<h:outputLabel value="City">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.city}" />
+
+						<h:outputLabel value="State">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.state}" />
+
+						<h:outputLabel value="Post Code">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.postCode}" />
+
+						<h:outputLabel value="Country">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.country}" />
+
+						<h:outputLabel value="Contact Number">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.contactNumber}" />
+
+						<h:outputLabel value="Alternate Contact Number">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.alternateContactNumber}" />
+
+						<h:outputLabel value="Same As Residential" />
+						<h:selectBooleanCheckbox
+							value="#{employeeDetailsBean.sameAddress}">
+							<f:ajax listener="#{employeeDetailsBean.OnSameAddress}"
+								render="prmntAddress prmntCity prmntState prmntPostCode prmntCountry"
+								execute="employeeDetailsForm" />
+						</h:selectBooleanCheckbox>
+
+						<h:outputLabel value="Permanent Address">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputTextarea
+							value="#{employeeDetailsBean.permanentAddress}"
+							id="prmntAddress"
+							readonly="#{employeeDetailsBean.sameAddress}" />
+
+						<h:outputLabel value="City">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText value="#{employeeDetailsBean.permanentCity}"
+							id="prmntCity" readonly="#{employeeDetailsBean.sameAddress}" />
+
+						<h:outputLabel value="State" />
+						<h:inputText value="#{employeeDetailsBean.permanentState}"
+							id="prmntState" readonly="#{employeeDetailsBean.sameAddress}" />
+
+						<h:outputLabel value="Post Code" />
+						<h:inputText value="#{employeeDetailsBean.permanentPostCode}"
+							id="prmntPostCode"
+							readonly="#{employeeDetailsBean.sameAddress}" />
+
+						<h:outputLabel value="Country" />
+						<h:inputText value="#{employeeDetailsBean.permanentCountry}"
+							id="prmntCountry"
+							readonly="#{employeeDetailsBean.sameAddress}" />
+
+						<h:outputLabel value="Personal Email" />
+						<h:inputText value="#{employeeDetailsBean.personalEmail}" />
+					</h:panelGrid>
+				</rich:tab>
+
+				<rich:tab header="Leave Details">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Emergency Contact Name">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.emergencyContact1Name}" />
+
+						<h:outputLabel value="Emergency Contact Relation">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.emergencyContact1Relation}" />
+
+						<h:outputLabel value="Emergency Contact Number">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.emergencyContact1ContactNumber}" />
+
+						<h:outputLabel value="Emergency Contact Name">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.emergencyContact2Name}" />
+
+						<h:outputLabel value="Emergency Contact Relation">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.emergencyContact2Relation}" />
+
+						<h:outputLabel value="Emergency Contact Number">
+							<font class="redFont">*</font>
+						</h:outputLabel>
+						<h:inputText
+							value="#{employeeDetailsBean.emergencyContact2ContactNumber}" />
+
+					</h:panelGrid>
+				</rich:tab>
+
+			</rich:tabPanel>
+
+			<h:panelGrid>
+
+				<h:commandButton value="Save"
+					action="#{employeeDetailsBean.saveEmployeeDetails}"
+					styleClass="btn btn-small btn-primary" />
+
+			</h:panelGrid>
+
+			<ui:include src="/WEB-INF/templates/warningErrorPanel.xhtml">
+				<ui:param name="bean" value="#{baseBean}" />
+			</ui:include>
+			<ui:include src="/WEB-INF/templates/loading.xhtml">
+				<ui:param name="bean" value="#{baseBean}" />
+			</ui:include>
+		</h:form>
+</ui:composition>

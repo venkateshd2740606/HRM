@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3"
+	xmlns:test="http://xmlns.jcp.org/jsf/component">
+	
+
+	<a4j:outputPanel name="holidayListingForm">
+
+		<div>
+			<BR />
+		</div>
+
+		<a4j:outputPanel id="holidaysForm">
+			
+			<h:dataTable id="holidaysTable" value="#{holidayListingBean.holidaysList}" rowClasses="leave_dt_col" columnClasses="leave_dt_col"
+				var="holiday" rendered="#{not empty holidayListingBean.holidaysList}">
+
+				<h:column headerClass="leave_dt_header width10Percent">
+					<f:facet name="header">
+						<h:outputText value="Holiday" />
+					</f:facet>
+					<h:outputText value="#{holiday.name}" rendered="#{!holiday.editable}" />
+					<h:inputText value="#{holiday.name}" rendered="#{holiday.editable}"></h:inputText>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width5Percent">
+					<f:facet name="header">
+						<h:outputText value="Date" />
+					</f:facet>
+					<h:outputText value="#{holiday.date}" title="#{holiday.date}" rendered="#{!holiday.editable}"><f:convertDateTime pattern="d-M-yyyy" /></h:outputText>
+					<rich:calendar value="#{holiday.date}" rendered="#{holiday.editable}"
+							id="date" datePattern="dd/MM/yyyy" style="width:200px">							
+					</rich:calendar>
+				</h:column>	
+				
+                <h:column headerClass="width10Percent" rendered="#{baseBean.role == 'admin'}">
+                	<f:facet name="header">
+						<h:outputText value="Operations" />
+					</f:facet>
+                	<a4j:commandButton id="delete" value="Delete" action="#{holidayListingBean.deleteHoliday(holiday)}"
+						onbegin="#{rich:component('loadingModal')}.show();"
+						oncomplete="#{rich:component('loadingModal')}.hide();"
+						render="holidaysManagementFormId"
+						styleClass="btn btn-sm btn-info">
+					</a4j:commandButton>
+					<a4j:commandButton id="edit" value="edit" action="#{holidayListingBean.editHoliday(holiday)}" rendered="#{!holiday.editable}"
+						onbegin="#{rich:component('loadingModal')}.show();"
+						oncomplete="#{rich:component('loadingModal')}.hide();"
+						render="holidaysManagementFormId"
+						styleClass="btn btn-sm btn-info">
+					</a4j:commandButton>
+					<a4j:commandButton id="update" value="Update" action="#{holidayListingBean.updateHoliday(holiday)}"  rendered="#{holiday.editable}"
+						onbegin="#{rich:component('loadingModal')}.show();"
+						oncomplete="#{rich:component('loadingModal')}.hide();"
+						render="holidaysManagementFormId"
+						styleClass="btn btn-sm btn-info">
+					</a4j:commandButton>
+					<a4j:commandButton id="cancel" value="Cancel" action="#{holidayListingBean.cancelHoliday(holiday)}"  rendered="#{holiday.editable}"
+						onbegin="#{rich:component('loadingModal')}.show();"
+						oncomplete="#{rich:component('loadingModal')}.hide();"
+						render="holidaysManagementFormId"
+						styleClass="btn btn-sm btn-info">
+					</a4j:commandButton>
+				</h:column>
+	
+			</h:dataTable>
+		</a4j:outputPanel>
+
+		
+	</a4j:outputPanel>
+</ui:composition>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:kie="http://drools.org/schema/kie-spring"
+    
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                        http://www.springframework.org/schema/mvc       http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+                        http://drools.org/schema/kie-spring  http://drools.org/schema/kie-spring.xsd">
+
+	<!-- Activates various annotations to be detected in bean classes
+		<context:annotation-config/> only looks for annotations on beans in the same application context it is defined in.
+		The implicitly registered BeanPostProcessor Implementations include
+			AutowiredAnnotationBeanPostProcessor   - Autowires annotated fields, setter methods and arbitrary config methods 
+			CommonAnnotationBeanPostProcessor      - Supports common Java annotations out of the box, in particular the JSR-250 annotations.
+			PersistenceAnnotationBeanPostProcessor - Processes PersistenceUnit and PersistenceContext annotations, for injection of the corresponding JPA resources EntityManagerFactory and EntityManager
+			RequiredAnnotationBeanPostProcessor    - Eforces required JavaBean properties to have been configured
+	 -->
+	<context:annotation-config />
+	
+	<!-- Scans the classpath for annotated components that will be auto-registered as Spring beans.e.g, @Service @Repository @Component @Transactional
+	 and loads them into the application contex, Make sure all Transactional Services and Repositories exist in the application context  
+	 -->
+	<!-- @JSF ManagedBean and @Named and @Component scan-->
+	<context:component-scan base-package="com.kstrata.apps.hrm" />
+
+	
+	<!-- Simple implementation of the org.springframework.web.servlet.ViewResolver interface, allowing for direct resolution of symbolic view names to URLs,
+ 		without explicit mapping definition
+ 		viewClass - JsfView, renders a transient (stateless) JSF view template
+ 		View names can either be resource URLs themselves, or get augmented by a specified prefix and/or suffix
+		Maps logical view names to Facelet templates in /WEB-INF (e.g. 'search' to '/WEB-INF/search.xhtml' -->
+	<bean id="faceletsViewResolver"
+			 class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+			 p:viewClass="org.springframework.faces.mvc.JsfView"
+			 p:prefix="/WEB-INF/"
+			 p:suffix=".xhtml"/>
+	<!-- This declaration is not required as we are using context:annotation-config
+		<bean
+			class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor" /> 
+	-->
+
+	<util:properties id="urlMappingProps">
+		<prop key="/**/*.html">viewController</prop>
+	</util:properties>
+	
+	<!-- Simple Controller implementation that transforms the virtual path of a URL into a view name and returns that view -->
+    <bean id="viewController" 
+			class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />  
+    
+    <!-- Implementation of the org.springframework.web.servlet.HandlerMapping interface to map from URLs to request handler bean -->
+    <bean id="urlMapping" 
+    		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+        	p:mappings-ref="urlMappingProps"/>
+        
+    <!-- Declare the Interceptor -->
+    <bean id="localeChangeInterceptor" 
+    		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
+        	p:paramName="locale"/>
+    
+    <!-- Declare the Resolver -->
+    <bean id="localeResolver"
+    		class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+    
+
+</beans>

@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+	
+		<rich:popupPanel id="message_panel" resizeable="false" autosized="true" width="400" >   	  
+	        <f:facet name="header">
+	            <h:panelGroup styleClass="messageHeaderPanleGroup">
+	                <h:outputText value="#{bean.hasErrors ? 'Error' : (bean.hasWarns ? 'Warning' : 'Info')}" id="message_label" />
+	            </h:panelGroup>
+	        </f:facet>
+	        <f:facet name="controls">
+	            <h:panelGroup>
+	                <h:graphicImage value="../images/close.png" styleClass="hidelink" id="message_hidelink">
+	                	<rich:componentControl target="message_panel" operation="hide" event="click" onbeforeoperation="#{rich:component('loadingModal')}.hide();"/>
+	                </h:graphicImage>
+	            </h:panelGroup>
+	        </f:facet>
+	
+	        <h:panelGroup style="text-align: left;">
+	            <rich:messages layout="table" infoClass="infoMessage" errorClass="errorMessage" warnClass="warningMessage" ajaxRendered="false" />
+	        	<rf3:spacer height="10" />   
+	        </h:panelGroup>        
+	        
+	        <a4j:commandButton value="Continue" id="continue_button" style="width:100px;"
+	            oncomplete="#{rich:component('message_panel')}.hide();#{rich:component('message_panel')}.show();" 
+				action="#{bean.continueSave}" styleClass="btn btn-sm btn-info"
+				render="#{rerenderIfContinue},message_panel"
+				rendered="#{bean.hasWarns}" />
+				        
+			<a4j:commandButton value="Cancel" id="cancel_button" style="width:80px;"
+	            onclick="#{rich:component('message_panel')}.hide();" styleClass="btn btn-sm btn-info"
+	            rendered="#{bean.hasWarns}" />
+			
+			<a4j:commandButton value="OK" id="error_OK_button" style="width:40px;"
+	            onclick="#{rich:component('message_panel')}.hide();" styleClass="btn btn-sm btn-info"
+	            rendered="#{bean.hasErrors}" />
+	            
+            <a4j:commandButton value="OK" id="info_OK_button" style="width:40px;" styleClass="btn btn-sm btn-info"
+            onclick="#{rich:component('message_panel')}.hide();#{rich:component('loadingModal')}.hide();"
+            rendered="#{!bean.hasErrors and !bean.hasWarns}" render="#{renderIds}"/>
+	    </rich:popupPanel>
+</ui:composition>

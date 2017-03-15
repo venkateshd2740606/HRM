@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+	
+    <!-- nav -->
+	<nav id="nav" class="nav-primary hidden-xs" >
+		<ul class="nav" data-spy="affix" data-offset-top="50">
+			<li class="dropdown-submenutext-left active">
+				<a class="accordion-toggle active" data-toggle="collapse" data-parent="#nav" href="#menu">
+					<i class="fa fa-dashboard"/>
+					<span>
+						<h:outputLabel value="#{baseBean.role}"/>
+					</span>
+					<i class="fa fa-angle-right pull-right"/>
+				</a>
+			<div id="menu" class="panel-collapse in">
+				<ul class="list-unstyled">
+					<li>
+						<a4j:outputPanel rendered="#{baseBean.role == 'employee' || baseBean.role == 'admin'}">
+							<a href="/hrm/leave/leaveManagement.jsf"> <i class="fa fa-calendar"/>Leaves Management</a>
+						</a4j:outputPanel>
+					</li>
+					<li>
+						<a4j:outputPanel rendered="#{baseBean.role == 'admin' || baseBean.role == 'hr' || baseBean.role == 'sys_admin'}">
+							<a href="/hrm/attendance/attendanceManagement.jsf"><i class="fa fa-calendar"/><span>Attendance Management</span></a>
+						</a4j:outputPanel>
+					</li>
+					<li>
+						<a4j:outputPanel>
+							<a href="/hrm/holidays/holidaysManagement.jsf"><i class="fa fa-calendar"/><span>Holidays Management</span></a>
+						</a4j:outputPanel>
+					</li>
+				</ul>
+			</div>
+			</li>
+		</ul>
+	</nav>
+	<!-- / nav -->
+    
+</ui:composition>

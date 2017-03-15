@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<a4j:outputPanel>
+				<h:panelGrid columns="4" width="100%" cellpadding="0" cellspacing="0"
+					columnClasses="paginationPanleMsgCol,paginationPanleLeftButtons,paginationPanleCentreMsg,paginationPanleRightButtons"
+					rendered="#{fn:length(page.results) ne 0}">
+				<h:outputLabel value="Displaying #{page.totalNumberOfRecords} Record " rendered="#{page.totalNumberOfRecords eq 1}"/>	
+				<h:outputLabel value="Displaying #{page.firstRecordNumber} to #{page.lastRecordNumber} of  #{page.totalNumberOfRecords} Records " 
+				  rendered="#{page.totalNumberOfRecords gt 1}"/>
+					<h:panelGroup rendered="#{page.totalNumberOfPages gt 1}">
+						<a4j:commandButton value="&lt;&lt; First" action="#{bean[loadPage]}"
+							render="#{renderIds}"
+							onclick="#{rich:component('loadingModal')}.show()"
+							oncomplete="#{rich:component('loadingModal')}.hide();"
+							style="#{page.currentPageNumber eq 1 ? 'opacity:0.2;filter:alpha(opacity=20)' : ''}"
+							styleClass = "btn btn-sm btn-info paginationBtnStyle"
+							disabled="#{page.currentPageNumber eq 1}" >
+							<a4j:param name="currentPageNumber" value="1" assignTo="#{page.currentPageNumber}" noEscape="true" ></a4j:param>
+						</a4j:commandButton>
+						<a4j:commandButton value="&lt; Previous" action="#{bean[loadPage]}"
+							render="#{renderIds}"
+							onclick="#{rich:component('loadingModal')}.show()"
+							oncomplete="#{rich:component('loadingModal')}.hide();"
+							style="#{page.currentPageNumber eq 1 ? 'opacity:0.2;filter:alpha(opacity=20)' : ''}"
+							styleClass = "btn btn-sm btn-info paginationBtnStyle"
+							disabled="#{page.currentPageNumber eq 1}" >
+							<a4j:param name="currentPageNumber" value="#{page.currentPageNumber - 1}" assignTo="#{page.currentPageNumber}" noEscape="true" ></a4j:param>
+						</a4j:commandButton>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{page.totalNumberOfPages gt 1}"> 
+						<h:panelGrid columns="3">
+							<h:outputLabel value="Page # " />
+							<a4j:outputPanel>
+								<h:selectOneMenu value="#{page.currentPageNumber}" id="scrollerPageId" styleClass="form-control select">
+									<f:selectItems value="#{page.pageNumberList}" />
+									<a4j:ajax listener="#{bean[loadPage]}"
+										event="change" render="#{renderIds}"
+										onbegin="#{rich:component('loadingModal')}.show();"
+										oncomplete="#{rich:component('loadingModal')}.hide();" />
+								</h:selectOneMenu>
+							</a4j:outputPanel>
+							<h:outputLabel value=" of #{page.totalNumberOfPages}" />
+						</h:panelGrid>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{page.totalNumberOfPages gt 1}">
+						<a4j:commandButton value="Next &gt;" id="next" action="#{bean[loadPage]}"
+							render="#{renderIds}"
+							onbegin="#{rich:component('loadingModal')}.show();"
+							oncomplete="#{rich:component('loadingModal')}.hide();"
+							style="#{page.isNextPageAvailable() ? '' : 'opacity:0.2;filter:alpha(opacity=20)'}"
+							styleClass = "btn btn-sm btn-info paginationBtnStyle"
+							disabled="#{not page.isNextPageAvailable()}" >
+							<a4j:param name="currentPageNumber" value="#{page.currentPageNumber + 1}" assignTo="#{page.currentPageNumber}" noEscape="true" ></a4j:param>
+						</a4j:commandButton>	
+						<a4j:commandButton value="Last &gt;&gt;" action="#{bean[loadPage]}"
+							render="#{renderIds}"
+							onclick="#{rich:component('loadingModal')}.show()"
+							oncomplete="#{rich:component('loadingModal')}.hide();"
+							style="#{page.isNextPageAvailable() ? '' : 'opacity:0.2;filter:alpha(opacity=20)'}"
+							styleClass = "btn btn-sm btn-info paginationBtnStyle"
+							disabled="#{not page.isNextPageAvailable()}" >
+							<a4j:param name="currentPageNumber" value="#{page.totalNumberOfPages}" assignTo="#{page.currentPageNumber}" noEscape="true" ></a4j:param>
+						</a4j:commandButton>	
+					</h:panelGroup>
+				</h:panelGrid>
+	</a4j:outputPanel>
+</ui:composition>

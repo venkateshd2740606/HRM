@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<script type="text/javascript">
+	</script>
+
+
+	<a4j:outputPanel name="navigationsForm" id="navigationsForm">
+		<div style="margin-left: 10%; margin-top: 30%;">
+				<h:commandLink value="Employee Management"
+					action="#{navigationHelper.navigateToEmployeeManagement}"
+					immediate="true" />
+					
+				<br></br>
+				<h:commandLink value="Attendance Management"
+					action="#{navigationHelper.navigateToAttendanceManagement}"
+					immediate="true" />
+			
+				<br></br>
+				<h:commandLink value="Leave Management"
+					action="#{navigationHelper.navigateToLeaveManagement}"
+					immediate="true" />		
+		</div>
+	</a4j:outputPanel>
+</ui:composition>

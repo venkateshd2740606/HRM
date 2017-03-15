@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
+        version="2.1">
+    
+    <application>
+	
+		<!-- com.sun.facelets.FaceletViewHandler <view-handler> declaration is not required as Facelets are now the default rendering technology in JSF 2 -->
+		<!-- ELResolver that delegates to the Spring root WebApplicationContext, resolving name references to Spring-defined beans.
+			 All your JSF expressions can then implicitly refer to the names of Spring-managed service layer beans -->
+		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+
+		<message-bundle>MessageResources</message-bundle>
+		
+		<locale-config>
+			<default-locale>en</default-locale>
+		</locale-config>
+	</application>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>navigateToLeaveManagement</from-outcome>
+			<to-view-id>/leave/leaveManagement.xhtml</to-view-id>		
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>navigateToAttendanceManagement</from-outcome>
+			<to-view-id>/attendance/attendanceManagement.xhtml</to-view-id>		
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>navigateToEmployeeManagement</from-outcome>
+			<to-view-id>/employee/employeeManagement.xhtml</to-view-id>		
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+	
+</faces-config>

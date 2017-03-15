@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<!-- nav -->
+	<nav id="nav" class="nav-primary hidden-xs">
+		<ul class="nav" data-spy="affix" data-offset-top="50">
+			<li class="dropdown-submenutext-left active" id="adminNav">
+			<a
+				class="accordion-toggle active" data-toggle="collapse"
+				data-parent="#adminNav" href="#adminMenu"> <i
+					class="fa fa-dashboard"></i><span>Admin</span><i
+					class="fa fa-angle-right pull-right"></i>
+			</a>
+
+				<div id="adminMenu" class="panel-collapse in">
+					<ul class="list-unstyled">
+						<li><a href="/hrm/leave/leaveManagement.jsf"><i
+								class="fa fa-calendar"></i>Leaves Mgmt</a></li>
+
+					</ul>
+				</div></li>
+			<li><a href="/hrm/attendance/attendanceManagement.jsf"><i
+					class="fa fa-calendar fa-lg"></i><span>Attendance</span></a></li>
+		</ul>
+	</nav>
+	<!-- / nav -->
+
+</ui:composition>

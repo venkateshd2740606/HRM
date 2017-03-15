@@ -1,0 +1,55 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+		<script type="text/javascript">
+	    // <![CDATA[
+	     function disableBeforeToday(day) {
+	    	var curDt = #{rich:component('dateStartCalendar')}.selectedDate;
+	        return (curDt.getTime() - day.date.getTime() < 0);
+	    }
+	    // ]]>
+	</script>
+
+
+		<a4j:outputPanel name="addHolidayForm" id="addHolidayFormId">
+		
+			<a4j:outputPanel id="fields" styleClass="width100Percent">
+				<h:panelGrid columns="2" style="margin-left: 10px ! important; display: inline-block; width: 30%;height: 111px;">
+
+					<h:outputText value="Holiday Name*" />
+					<h:inputText id="name" value="#{addHolidayBean.holiday.name}" styleClass="form-control ro parsley-validated"/>
+
+					<h:outputText value="Date*" />
+					<a4j:outputPanel layout="block">
+						<rich:calendar value="#{addHolidayBean.holiday.date}"
+							id="date" datePattern="dd/MM/yyyy" style="width:200px">							
+						</rich:calendar>
+					</a4j:outputPanel>
+					
+				</h:panelGrid>
+			</a4j:outputPanel>
+			<br />	
+			
+			<h:panelGrid columns="4" style="margin: 0 auto;">
+			
+			<a4j:commandButton value="Submit" action="#{addHolidayBean.save}" 
+				style="width:80px;"
+				onbegin="#{rich:component('loadingModal')}.show();"
+				oncomplete="#{rich:component('loadingModal')}.hide();#{rich:component('message_panel')}.show();"
+				render="message_panel,addHolidayFormId"
+				styleClass="btn btn-sm btn-info">
+			</a4j:commandButton>
+			<h:outputText value="&#160;" />
+			<h:outputText value="&#160;" />
+			<a4j:commandButton value="Cancel" action="#{addHolidayBean.resetFields}"
+			style="width:80px;" render="addHolidayFormId" styleClass="btn btn-sm btn-info"></a4j:commandButton>
+			
+			</h:panelGrid>
+		</a4j:outputPanel>
+</ui:composition>

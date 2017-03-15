@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:sec="http://www.springframework.org/schema/security"
+
+	xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	    http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security.xsd">
+ 
+ 	
+ 	<!-- Enable annotation based security and JSR-250 annotations -->
+	   <sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" jsr250-annotations="enabled"/>
+	   		
+	<bean id="springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+        <sec:filter-chain-map path-type="ant">
+          <sec:filter-chain pattern="/css/**" filters="none" />
+          <sec:filter-chain pattern="/js/**" filters="none" />
+          <sec:filter-chain pattern="/images/**" filters="none" />
+          <sec:filter-chain pattern="/**/*.gif" filters="none" />
+          <sec:filter-chain pattern="/**/*.png" filters="none" />
+          <sec:filter-chain pattern="/**/*.jpg" filters="none" />
+	      <sec:filter-chain pattern="/login.jsf**" filters="none"/>
+          <sec:filter-chain pattern="/**" filters="scpf,logoutFilter,coreAuthenticationFilter,etf,fsi"/>
+        </sec:filter-chain-map>
+    </bean>
+    
+  	<sec:filter-invocation-definition-source id="fids">
+		<sec:intercept-url pattern="/secure/**" access="ADMIN"/>
+	</sec:filter-invocation-definition-source> 
+
+		<!-- SecurityContextPersistenceFilter, so a SecurityContext can be set up in the SecurityContextHolder at the beginning of a web request, 
+			and any changes to the SecurityContext can be copied to the HttpSession when the web request ends (ready for use with the next web request) -->
+   	  <bean id="scpf" class="org.springframework.security.web.context.SecurityContextPersistenceFilter"/>
+   	  
+   	  <!-- Authentication processing mechanisms - UsernamePasswordAuthenticationFilter, CasAuthenticationFilter, 
+   	  	BasicAuthenticationFilter etc - so that the SecurityContextHolder can be modified to contain a valid Authentication request token -->
+   	  	
+     <bean id="coreAuthenticationFilter"
+		 	 class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+		 	p:usernameParameter="username"
+		 	p:passwordParameter="password"
+		  p:authenticationManager-ref="authenticationManager"
+		  p:authenticationSuccessHandler-ref="successHandler"
+		  p:authenticationFailureHandler-ref="failureHandler"/>
+		  
+	
+	<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter"
+        	c:logoutSuccessUrl="/login.jsf"
+        	c:handlers-ref="logoutHandler"/>
+	
+	<!-- ExceptionTranslationFilter, to catch any Spring Security exceptions so that 
+		  either an HTTP error response can be returned or an appropriate AuthenticationEntryPoint can be launched -->
+     <bean id="etf" class="org.springframework.security.web.access.ExceptionTranslationFilter"
+        p:authenticationEntryPoint-ref="authenticationEntryPoint"
+        p:accessDeniedHandler-ref="accessDeniedHandler" />
+	
+	<!-- FilterSecurityInterceptor, to protect web URIs and raise exceptions when access is denied -->
+	<bean id="fsi" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor"
+	        p:authenticationManager-ref="authenticationManager"
+	        p:accessDecisionManager-ref="httpRequestAccessDecisionManager"
+	        p:securityMetadataSource-ref="fids"/>
+	        
+	<bean id="successHandler" class="com.kstrata.apps.hrm.web.security.CustomAuthenticationSuccessHandler"
+ 		p:defaultTargetUrl="/dashboard/dashboard.jsf" />
+	
+	<bean id="failureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
+ 		p:defaultFailureUrl="/login.jsf?login_error=1"/>
+	
+	<bean id="logoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+    
+    <bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
+		 p:loginFormUrl="/login.jsf"/>
+
+	<bean id="accessDeniedHandler" class="org.springframework.security.web.access.AccessDeniedHandlerImpl"
+  		p:errorPage="/userDeniedException.jsf"/>
+	
+	<bean id="httpRequestAccessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased"
+		p:allowIfAllAbstainDecisions="false" p:decisionVoters-ref="roleVoter"/>
+    
+    
+    <bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" p:rolePrefix=""/>
+	 
+	<sec:authentication-manager alias="authenticationManager" >
+		<sec:authentication-provider ref="daoAuthenticationProvider"/>
+	</sec:authentication-manager> 
+		
+	<!-- <bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider"
+		p:userDetailsService-ref="userDetailsService" p:saltSource-ref="saltSource" p:passwordEncoder-ref="passwordEncoder"/> -->
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider"
+		p:userDetailsService-ref="employeeService" p:passwordEncoder-ref="passwordEncoder" p:saltSource-ref="saltSource"/>
+			
+	<bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource" p:userPropertyToUse="username"/>
+
+	<bean id="employeeService" name="userAuthenticationProvider" class="com.kstrata.apps.hrm.service.impl.EmployeeServiceImpl" >
+		<constructor-arg index="0" ref="employeeDAO" />
+	</bean>
+
+	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"/>
+	<bean id="employeeDAO" class="com.kstrata.apps.hrm.dao.impl.EmployeeDAOImpl"/>
+     
+</beans>

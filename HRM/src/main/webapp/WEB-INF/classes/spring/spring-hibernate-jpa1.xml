@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xmlns:util="http://www.springframework.org/schema/util"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:tx="http://www.springframework.org/schema/tx" 
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans     http://www.springframework.org/schema/beans/spring-beans.xsd
+        				 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        				http://www.springframework.org/schema/context   http://www.springframework.org/schema/context/spring-context.xsd
+       					http://www.springframework.org/schema/tx        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+	<util:list id="persistenceXmlList">
+  		<value>classpath:META-INF/persistence.xml</value>
+	</util:list>
+	
+	<util:list id="packagesToScanList">
+  		<value>com.kstrata.apps.hrm.model.**</value>
+	</util:list>
+	
+	<util:properties id="jpaProperties">
+		<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+		<prop key="hibernate.bytecode.provider">javassist</prop>
+		
+		<prop key="hibernate.show_sql">true</prop>
+		<!-- <prop key="hibernate.format_sql">true</prop> -->
+        <!-- <prop key="hibernate.use_sql_comments">false</prop> -->
+        <prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+        <prop key="hibernate.transaction.auto_close_session">true</prop>
+        
+       <!-- Optional Seconday level cache --> 
+	   <prop key="hibernate.cache.use_second_level_cache">true</prop>
+       <prop key="hibernate.cache.use_query_cache">true</prop>
+       <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop> 
+	   <prop key="hibernate.generate_statistics">false</prop>
+       <prop key="net.sf.ehcache.configurationResourceName">META-INF/ehcache.xml</prop>
+	</util:properties>
+		
+	 <bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />  
+		<property name="url" value="jdbc:mysql://localhost:3306/kstrata_hrm_2.0" />  
+		<property name="username" value="venkatesh" />  
+		<property name="password" value="venkatesh" />
+	</bean>  
+    
+	 <bean id="JSF2JpaVendorAdapter"
+	 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+			p:generateDdl="false"/>
+
+	  <bean id="persistenceUnitManager"
+	  		class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager"
+    		p:defaultDataSource-ref="dataSource"
+			p:persistenceXmlLocations-ref="persistenceXmlList"
+			p:packagesToScan-ref="packagesToScanList"/>
+		
+	<!--  the  entityManagerFactory bean is the heart of the Spring/Hibernate JPA configuration.  It's a Spring wrapper
+	      around Hibernate's EntityManager (itself a wrapper around Hibernate Core that provides JPA interfaces) --> 
+	<bean id="entityManagerFactory"
+		  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		  p:persistenceProviderClass="org.hibernate.jpa.HibernatePersistenceProvider"
+    	  p:persistenceUnitManager-ref="persistenceUnitManager"
+		  p:jpaVendorAdapter-ref="JSF2JpaVendorAdapter"
+		  p:jpaProperties-ref="jpaProperties"
+		  p:persistenceUnitName="eportal"/>
+    
+    <!-- Automatic transactions, no need to write Filters for transactions and worry about ThreadLocal-->
+	 <bean id="transactionManager" 
+	 		class="org.springframework.orm.jpa.JpaTransactionManager"
+ 			p:entityManagerFactory-ref="entityManagerFactory"/>
+		
+	 <tx:annotation-driven transaction-manager="transactionManager" />
+	 
+	 <bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />  
+		<property name="url" value="jdbc:mysql://localhost:3306/kstrata_hrm_1.0" />  
+		<property name="username" value="venkatesh" />  
+		<property name="password" value="venkatesh" />  
+	</bean> 
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">  
+		<property name="dataSource" ref="ds"></property>  
+	</bean>   
+    
+</beans>

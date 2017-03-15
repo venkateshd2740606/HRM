@@ -1,0 +1,17 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+	<f:subview id="loadingView">
+
+		<rich:popupPanel domElementAttachment="form" id="loadingModal" height="66" width="77"
+			moveable="false" resizeable="false">
+			<h:graphicImage value="/images/loading.gif" />
+		</rich:popupPanel>
+
+	</f:subview>
+
+</ui:composition>

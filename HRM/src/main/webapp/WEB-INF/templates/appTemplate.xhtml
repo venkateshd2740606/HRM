@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+<HEAD>
+	<TITLE>Kstrata HRM</TITLE>
+</HEAD>
+<h:head>
+		
+ 	<link rel="stylesheet" href="../css/bootstrap.css" />
+    <link rel="stylesheet" href="../css/font-awesome.min.css" />
+    <link rel="stylesheet" href="../css/font.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/plugin.css" />
+    <!--[if lt IE 9]>
+    <script src="js/ie/respond.min.js"></script>
+    <script src="js/ie/html5.js"></script>
+    <script src="js/ie/excanvas.js"></script>
+  <![endif]-->
+		
+	<ui:insert name="stylesheet"></ui:insert>
+</h:head>
+
+<h:body>
+<f:metadata>
+    <f:event type="preRenderView" listener="#{baseBean.init}" />
+</f:metadata>
+		<ui:include src="header.xhtml" />
+
+		<ui:include src="leftNav.xhtml" />
+		<ui:insert name="content">
+		</ui:insert>
+		<ui:include src="footer.xhtml" />
+</h:body>
+</html>

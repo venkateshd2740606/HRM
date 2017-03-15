@@ -1,0 +1,38 @@
+<ui:composition template="/WEB-INF/templates/appTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<ui:define name="stylesheet">
+	</ui:define>
+
+	<ui:define name="content">
+		<section id="content">
+			<section class="main padder">
+				<div class="row">
+					<div style="margin-left: 5px;"><h3 style="margin-left: -70px; display: inline-block;"><i class="fa fa-calendar" style="margin-right: 3px;"></i>Attendance Management</h3></div>
+					<h:form name="attendanceManagementForm" id="attendanceManagementFormId">
+						<rich:tabPanel activeItem="#{attedanceManagementBean.selectedTab}"
+							switchType="ajax" itemChangeListener="#{attedanceManagementBean.tabChange}">
+							<rich:tab name="Add_Attendance" header="Add Attendance">
+								<ui:include src="addAttendance.xhtml">
+								</ui:include>
+							</rich:tab>
+						</rich:tabPanel>
+						<ui:include src="/WEB-INF/templates/warningErrorPanel.xhtml">
+							<ui:param name="bean" value="#{baseBean}" />
+						</ui:include>
+						<ui:include src="/WEB-INF/templates/loading.xhtml">
+							<ui:param name="bean" value="#{baseBean}" />
+						</ui:include>
+					</h:form>
+				</div>
+			</section>
+		</section>
+		<br></br>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:sec="http://www.springframework.org/schema/security"
+
+	xsi:schemaLocation="
+	    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	    http://www.springframework.org/schema/security  http://www.springframework.org/schema/security/spring-security.xsd">
+
+
+	<!-- authentication manager and password hashing -->
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider ref="daoAuthenticationProvider" />
+	</sec:authentication-manager>
+	
+
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider"
+		p:userDetailsService-ref="userDetailsService" p:saltSource-ref="saltSource" p:passwordEncoder-ref="passwordEncoder"/>
+			
+	<bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource" p:userPropertyToUse="username"/>
+
+	<bean id="userDetailsService" name="userAuthenticationProvider"
+		class="com.kstrata.apps.hrm.service.impl.EmployeeServiceImpl" >
+		<constructor-arg index="0" ref="employeeDAO" />
+	</bean>
+
+	<bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+		<constructor-arg index="0" value="256" />
+	</bean>
+	<bean id="employeeDAO" class="com.kstrata.apps.hrm.dao.impl.EmployeeDAOImpl">
+	</bean>
+</beans>

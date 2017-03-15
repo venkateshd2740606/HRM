@@ -1,0 +1,40 @@
+<ui:composition template="/WEB-INF/templates/appTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<ui:define name="content">
+		<!-- Right side column. Contains the navbar and content of the page -->
+		<section id="content">
+			<section class="main padder">
+				<div class="row">
+					<div style="margin-left: 5px;"><h3 style="margin-left: -70px; display: inline-block;"><i class="fa fa-calendar" style="margin-right: 3px;"></i>Leaves Management</h3></div>
+					<h:form name="leanManagementForm" id="leaveManagementFormId">
+						<rich:tabPanel activeItem="#{leaveManagementBean.selectedTab}" id="leaveManagemantTabs"
+							switchType="server" itemChangeListener="#{leaveManagementBean.tabChange}">
+							<rich:tab name="LEAVELIST" header="Leave Listing">
+								<ui:include src="leaveListing.xhtml">
+								</ui:include>
+							</rich:tab>
+							<rich:tab name="APPLYLEAVE" header="Apply Leave">
+								<ui:include src="applyLeave.xhtml">
+								</ui:include>
+							</rich:tab>
+						</rich:tabPanel>
+						<ui:include src="/WEB-INF/templates/warningErrorPanel.xhtml">
+							<ui:param name="bean" value="#{baseBean}" />
+						</ui:include>
+						<ui:include src="/WEB-INF/templates/loading.xhtml">
+							<ui:param name="bean" value="#{baseBean}" />
+						</ui:include>
+					</h:form>
+				</div>
+			</section>
+		</section>
+		<br></br>
+	</ui:define>
+</ui:composition>

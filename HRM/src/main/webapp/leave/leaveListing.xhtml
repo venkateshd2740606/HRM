@@ -1,0 +1,318 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3"
+	xmlns:test="http://xmlns.jcp.org/jsf/component">
+
+	<h:selectOneRadio value="#{leaveListingBean.selectedRadio}" rendered="#{baseBean.role == 'admin'}" styleClass="empFetch">
+		<f:selectItem itemValue="All Employees" itemLabel="All Pending Leaves" />
+		<f:selectItem itemValue="Single Employee" itemLabel="Single Employee" />
+		
+		<a4j:ajax event="click" listener="#{leaveListingBean.loadData}"
+			onbegin="#{rich:component('loadingModal')}.show();"
+			oncomplete="#{rich:component('loadingModal')}.hide();"
+			render="leaveManagementFormId" />
+	</h:selectOneRadio>
+
+	<a4j:outputPanel name="leavesListingForm">
+
+		<div>
+			<BR />
+		</div>
+
+		<a4j:outputPanel id="pendingAllEmployeeLeaves" rendered="#{leaveListingBean.selectedRadio == 'All Employees' and baseBean.role == 'admin'}">
+			
+			<h:dataTable id="pendingAllEmployeeLeavesTable" value="#{leaveListingBean.pendingAllEmployeeLeaves}" rowClasses="leave_dt_col" columnClasses="leave_dt_col"
+				var="employeeLeave" rendered="#{not empty leaveListingBean.pendingAllEmployeeLeaves}">
+
+				<h:column headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="Name" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.employee.empFirstName} #{employeeLeave.employee.empLastName}" title="#{employeeLeave.employee.empFirstName} #{employeeLeave.employee.empLastName}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width7Percent">
+					<f:facet name="header">
+						<h:outputText value="From" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.startDate}" title="#{employeeLeave.startDate}" ><f:convertDateTime pattern="d-M-yyyy" /></h:outputText>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width7Percent">
+					<f:facet name="header">
+						<h:outputText value="To" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.endDate}" title="#{employeeLeave.endDate}" ><f:convertDateTime pattern="d-M-yyyy" /></h:outputText>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="LeaveType" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.leaveProjectConstant.name}" title="#{employeeLeave.leaveProjectConstant.name}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width20Percent">
+					<f:facet name="header">
+						<h:outputText value="Reason" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.reasonString}" title="#{employeeLeave.reasonString}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="Status" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.statusProjectConstant.name}" title="#{employeeLeave.statusProjectConstant.name}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="Total Days" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.days}" title="#{employeeLeave.days}" />
+				</h:column>
+				
+				<h:column headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="Balance" />
+					</f:facet>
+					<h:outputLabel value="#{employeeLeave.employee.annualLeaveBal}" ><f:convertNumber pattern="#0.0" /></h:outputLabel>
+				</h:column>
+
+				<h:column rendered="#{baseBean.role == 'admin'}"  headerClass="leave_dt_header">
+					<h:selectOneMenu id="statusTypes" value="#{employeeLeave.mgrStatus}" styleClass="form-control select">
+						<f:selectItems value="#{leaveListingBean.statusTypes}" />
+					</h:selectOneMenu>
+				</h:column>
+
+				<h:column rendered="#{baseBean.role == 'admin'}"  headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="Comments" />
+					</f:facet>
+					<h:inputText value="#{leaveListingBean.comments}" styleClass="form-control ro parsley-validated" />
+				</h:column>
+				
+				<h:column rendered="#{baseBean.role == 'admin'}"  headerClass="leave_dt_header">
+					<f:facet name="header">
+						<h:outputText value="Details" />
+					</f:facet>
+					<a4j:commandLink value="Show Details" action="#{leaveListingBean.changeEmployee(employeeLeave.employee)}" 
+						oncomplete="#{rich:component('popup')}.show();" render="showEmployeeLeaveDetails">
+					</a4j:commandLink>
+					<rich:popupPanel id="popup" modal="true" resizeable="true" onmaskclick="#{rich:component('popup')}.hide()" width="700" height="400">
+						<f:facet name="header">
+							<h:outputText value="All Pending Leaves" />
+						</f:facet>
+						<f:facet name="controls">
+							<h:outputLink value="#" onclick="#{rich:component('popup')}.hide(); return false;">
+                				X
+            				</h:outputLink>
+						</f:facet>
+						<ui:include src="employeeLeaves.xhtml" />
+					</rich:popupPanel>
+				</h:column>
+
+				<h:column width="110px" rendered="#{baseBean.role == 'admin'}"  headerClass="leave_dt_header">
+					<a4j:commandButton value="Update" action="#{leaveListingBean.updateEmployeeLeave(employeeLeave,employeeLeave.employee)}"
+						styleClass="btn btn-sm btn-info"
+						oncomplete="#{rich:component('message_panel')}.show();" render="message_panel,leaveManagementFormId" />
+				</h:column>
+			</h:dataTable>
+		</a4j:outputPanel>
+
+		<a4j:outputPanel id="singleEmployeeLeaves" rendered="#{leaveListingBean.selectedRadio == 'Single Employee' or baseBean.role != 'admin'}">
+		<h:panelGrid columns="3">
+			<h:selectOneMenu id="emp" rendered="#{baseBean.role == 'admin'}" styleClass="form-control select"
+				value="#{leaveListingBean.selectedEmployee}">
+				<f:selectItems value="#{leaveListingBean.employeesForSelect}" />
+				<a4j:ajax event="change" listener="#{leaveListingBean.loadEmployeesLeaves}" render="leavesListingForm,singleEmployeeLeaves,leaveBalanceReportId"
+				onbegin="#{rich:component('loadingModal')}.show();" oncomplete="#{rich:component('loadingModal')}.hide();"/>
+			</h:selectOneMenu>
+			<rf3:spacer width="20"/>
+			<h:panelGrid columns="2" id="leaveBalanceReportId" columnClasses="leave_balance_col" style="width:100%;display: inline-block;margin-left:77%;">
+					<h:outputLabel value="Annual Leave Balance " />
+					<h:outputLabel value="#{leaveListingBean.selectedEmp.annualLeaveBal}" rendered="#{baseBean.role == 'admin'}"><f:convertNumber pattern="#0.0" /></h:outputLabel>
+					<h:outputLabel value="#{leaveListingBean.employee.annualLeaveBal}" rendered="#{baseBean.role != 'admin'}"><f:convertNumber pattern="#0.0" /></h:outputLabel>
+					<h:outputLabel value="Sick Leave Balance " />
+					<h:outputLabel value="#{leaveListingBean.selectedEmp.sickLeaveBal}" rendered="#{baseBean.role == 'admin'}"><f:convertNumber pattern="#0.0" /></h:outputLabel>
+					<h:outputLabel value="#{leaveListingBean.employee.sickLeaveBal}" rendered="#{baseBean.role != 'admin'}"><f:convertNumber pattern="#0.0" /></h:outputLabel>
+			</h:panelGrid>
+		</h:panelGrid>
+			<br />
+			<h:outputLabel rendered="#{not empty leaveListingBean.pendingEmployeeLeaves}"><h5>Current Leaves: </h5></h:outputLabel>
+
+			<h:dataTable id="unApprovedLeavesTable" value="#{leaveListingBean.pendingEmployeeLeaves}" rowClasses="leave_dt_col" columnClasses="leave_dt_col"
+				var="employeeLeave" rendered="#{not empty leaveListingBean.pendingEmployeeLeaves}" 
+				style="width:100%">
+
+				<h:column  headerClass="leave_dt_header width12Percent">
+					<f:facet name="header">
+						<h:outputText value="From" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.startDate}" title="#{employeeLeave.startDate}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+				</h:column>
+
+				<h:column  headerClass="leave_dt_header width10Percent">
+					<f:facet name="header">
+						<h:outputText value="To" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.endDate}" title="#{employeeLeave.endDate}"  ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width7Percent">
+					<f:facet name="header">
+						<h:outputText value="LeaveType" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.leaveProjectConstant.name}" title="#{employeeLeave.leaveProjectConstant.name}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width20Percent">
+					<f:facet name="header">
+						<h:outputText value="Reason" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.reasonString}" title="#{employeeLeave.reasonString}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width5Percent">
+					<f:facet name="header">
+						<h:outputText value="Status" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.statusProjectConstant.name}" title="#{employeeLeave.statusProjectConstant.name}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width5Percent">
+					<f:facet name="header">
+						<h:outputText value="Total Days" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.days}" title="#{employeeLeave.days}" />
+				</h:column>
+				
+				<h:column rendered="#{baseBean.role != 'admin'}"  headerClass="leave_dt_header width10Percent">
+					<f:facet name="header">
+						<h:outputText value="Comments" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.commentsString}"/>
+				</h:column>
+
+				<h:column rendered="#{baseBean.role == 'admin'}" headerClass="leave_dt_header width12Percent">
+					<f:facet name="header">
+						<h:outputText value="Submit Status" />
+					</f:facet>
+					<h:selectOneMenu id="statusTypes" styleClass="form-control select" rendered="#{employeeLeave.statusProjectConstant.name == 'PENDING'}"
+						value="#{employeeLeave.mgrStatus}">
+						<f:selectItems value="#{leaveListingBean.statusTypes}" />
+					</h:selectOneMenu>
+				</h:column>
+
+				<h:column rendered="#{baseBean.role == 'admin'}" headerClass="leave_dt_header width10Percent">
+					<f:facet name="header">
+						<h:outputText value="Comments" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.commentsString}" title="#{employeeLeave.commentsString}" rendered="#{employeeLeave.statusProjectConstant.name != 'PENDING'}"/>
+					<h:inputText value="#{leaveListingBean.comments}" styleClass="form-control ro parsley-validated" rendered="#{employeeLeave.statusProjectConstant.name == 'PENDING'}"/>
+				</h:column>
+
+				<h:column rendered="#{baseBean.role == 'admin'}" headerClass="leave_dt_header">
+					<a4j:commandButton value="Update" action="#{leaveListingBean.updateEmployeeLeave(employeeLeave, leaveListingBean.selectedEmp)}" rendered="#{employeeLeave.statusProjectConstant.name == 'PENDING'}"
+						oncomplete="#{rich:component('message_panel')}.show();" render="message_panel,leaveManagementFormId" styleClass="btn btn-sm btn-info"/>
+					<a4j:commandButton value="Edit" 		
+						action="#{leaveListingBean.editEmployeeLeave(employeeLeave, leaveListingBean.selectedEmp)}" 
+						rendered="#{employeeLeave.statusProjectConstant.name != 'PENDING'}"
+						oncomplete="#{rich:component('message_panel')}.show();#{rich:component('leaveManagemantTabs')}.switchToItem('APPLYLEAVE');" 
+						render="leaveManagementFormId" styleClass="btn btn-sm btn-info"/>
+					<a4j:commandButton value="Delete" action="#{leaveListingBean.deleteEmployeeLeave(employeeLeave,'Current')}"
+						onclick="if (! confirm('Delete the selected leave?')) return false"
+						oncomplete="#{rich:component('message_panel')}.show();" render="message_panel,leaveManagementFormId" styleClass="btn btn-sm btn-info"/>
+				</h:column>
+			</h:dataTable>
+
+			<span> 
+				<br /> 
+				<h:outputLabel rendered="#{not empty leaveListingBean.grantedEmployeeLeaves}"><h5>Passed Leaves : </h5></h:outputLabel>
+			</span>
+
+			<h:dataTable id="grantedLeavesTable" value="#{leaveListingBean.grantedEmployeeLeaves}" rowClasses="leave_dt_col" columnClasses="leave_dt_col"
+				var="employeeLeave" rendered="#{not empty leaveListingBean.grantedEmployeeLeaves}"
+				style="width:100%">
+
+				<h:column headerClass="leave_dt_header width7Percent">
+					<f:facet name="header">
+						<h:outputText value="From" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.startDate}" title="#{employeeLeave.startDate}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width7Percent">
+					<f:facet name="header">
+						<h:outputText value="To" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.endDate}" title="#{employeeLeave.endDate}" ><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width5Percent">
+					<f:facet name="header">
+						<h:outputText value="LeaveType" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.leaveProjectConstant.name}" title="#{employeeLeave.leaveProjectConstant.name}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width20Percent">
+					<f:facet name="header">
+						<h:outputText value="Reason" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.reasonString}" title="#{employeeLeave.reasonString}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width5Percent">
+					<f:facet name="header">
+						<h:outputText value="Status" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.statusProjectConstant.name}" title="#{employeeLeave.statusProjectConstant.name}" />
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width5Percent">
+					<f:facet name="header">
+						<h:outputText value="Total Days" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.days}" title="#{employeeLeave.days}" />
+				</h:column>
+				
+				<h:column rendered="#{baseBean.role == 'admin'}" headerClass="leave_dt_header width12Percent">
+					<f:facet name="header">
+						<h:outputText value="Submit Status" />
+					</f:facet>
+					<h:selectOneMenu id="statusTypes" styleClass="form-control select" rendered="#{employeeLeave.statusProjectConstant.name == 'PENDING'}"
+						value="#{employeeLeave.mgrStatus}">
+						<f:selectItems value="#{leaveListingBean.statusTypes}" />
+					</h:selectOneMenu>
+				</h:column>
+
+				<h:column headerClass="leave_dt_header width10Percent">
+					<f:facet name="header">
+						<h:outputText value="Comments" />
+					</f:facet>
+					<h:outputText value="#{employeeLeave.commentsString}" title="#{employeeLeave.commentsString}" rendered="#{employeeLeave.statusProjectConstant.name != 'PENDING'}"/>
+					<h:inputText value="#{leaveListingBean.comments}" styleClass="form-control ro parsley-validated" rendered="#{employeeLeave.statusProjectConstant.name == 'PENDING'}"/>
+				</h:column>
+				
+				<h:column rendered="#{baseBean.role == 'admin'}" headerClass="leave_dt_header">
+					<a4j:commandButton value="Update" action="#{leaveListingBean.updateEmployeeLeave(employeeLeave, leaveListingBean.selectedEmp)}" rendered="#{employeeLeave.statusProjectConstant.name == 'PENDING'}"
+						oncomplete="#{rich:component('message_panel')}.show();" render="message_panel,leaveManagementFormId" styleClass="btn btn-sm btn-info"/>
+					<a4j:commandButton value="Edit" 		
+						action="#{leaveListingBean.editEmployeeLeave(employeeLeave, leaveListingBean.selectedEmp)}" 
+						rendered="#{employeeLeave.statusProjectConstant.name != 'PENDING'}"
+						oncomplete="#{rich:component('message_panel')}.show();#{rich:component('leaveManagemantTabs')}.switchToItem('APPLYLEAVE');" 
+						render="leaveManagementFormId" styleClass="btn btn-sm btn-info"/>
+					<a4j:commandButton value="Delete" action="#{leaveListingBean.deleteEmployeeLeave(employeeLeave,'Passed')}"
+						oncomplete="#{rich:component('message_panel')}.show();" render="message_panel,leaveManagementFormId" styleClass="btn btn-sm btn-info"/>
+				</h:column>
+
+			</h:dataTable>
+		</a4j:outputPanel>
+	</a4j:outputPanel>
+</ui:composition>

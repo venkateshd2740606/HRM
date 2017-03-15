@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<!-- header -->
+	<header id="header" class="navbar">
+	
+		<a class="navbar-brand" href="/hrm/dashboard/dashboard.jsf">
+			<img src="../images/kstrata_logo.jpg" /> 
+			<lable>Kstrata HRM </lable>
+		</a>
+		<ul class="nav navbar-nav navbar-avatar pull-right" style="width: 70px;">
+			<li class="dropdown">
+				<rich:toolbar height="26px" id="tb">
+					<rich:toolbarGroup location="right">
+						<h:outputLink value="#" class="dropdown-toggle" data-toggle="dropdown">
+							<rich:componentControl event="click" operation="show" target="ls">
+								<a4j:param name="event" value="event" noEscape="true" />
+								<rich:hashParam>
+									<a4j:param noEscape="true" name="top" value="jQuery(#{rich:element('tb')}).offset().top + jQuery(#{rich:element('tb')}).height()" />
+									<a4j:param noEscape="true" name="left" value="jQuery(#{rich:element('tb')}).offset().left" />
+								</rich:hashParam>
+							</rich:componentControl>
+							<span class="thumb-small avatar inline">
+								<img src="../images/avatar.jpg" class="img-circle" />
+							</span>
+						</h:outputLink>
+					</rich:toolbarGroup>
+				</rich:toolbar>
+			</li>
+		</ul>
+	
+		<rich:popupPanel id="ls" autosized="true" modal="true" moveable="false" resizeable="false" followByScroll="false" onmaskclick="#{rich:component('ls')}.hide()">
+			<h:panelGrid columns="1">
+				<form name="frmLogout" id="frmLogout" 
+					action="#{facesContext.externalContext.requestContextPath}/j_spring_security_logout" method="post" class="logoutForm">
+					<h4>
+						<a href="#" onclick="document.getElementById('frmLogout').submit()" class="logout_button"> 
+							<span>Logout</span>
+						</a>
+					</h4>
+				</form>
+			</h:panelGrid>
+		</rich:popupPanel>
+		
+		<h:outputScript type="text/javascript" target="body">
+			p_width = #{rich:component('ls')}.width();
+		</h:outputScript>
+		
+	</header>
+</ui:composition>

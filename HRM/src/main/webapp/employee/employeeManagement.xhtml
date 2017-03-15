@@ -1,0 +1,69 @@
+<ui:composition template="/WEB-INF/templates/appTemplate.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:rf3="http://java.sun.com/jsf/composite/rf3">
+
+	<ui:define name="stylesheet">
+		<script type="text/javascript">
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+		<!-- Left side column. contains the logo and sidebar -->
+		<aside style="min-height: 739px;" class="left-side sidebar-offcanvas">
+			<section class="sidebar">
+				<div class="user-panel">
+					<div class="pull-left image">
+						<img
+							src="#{facesContext.externalContext.requestContextPath}/images/user_male.png"
+							class="img-circle" alt="User Image"></img>
+					</div>
+					<div class="pull-left info">
+						<p>
+							<h:outputText value="#{dashboardBean.employee.empFirstName}   #{dashboardBean.employee.empLastName}" />
+						</p>
+
+					</div>
+					
+					<h:form>
+						<a4j:outputPanel id="navigations">
+							<ui:include src="/navigations.xhtml">
+							</ui:include>
+						</a4j:outputPanel>
+					</h:form>	
+				
+				</div>
+			</section>
+		</aside>
+
+		<!-- Right side column. Contains the navbar and content of the page -->
+		<aside class="right-side">
+			<section class="content">
+				<div id="Employee" class="reviewBlock" data-content="List"
+					style="padding-left: 5px;">
+
+					<h:form name="leanManagementForm" id="leaveManagementFormId">
+						<rich:tabPanel activeItem="#{leaveMaintenanceBean.selectedTab}" switchType="ajax" itemChangeListener="#{leaveMaintenanceBean.tabChange}">
+							<rich:tab name="EmployeeDetails" header="Employee Details">
+								<ui:include src="employeeDetails.xhtml">
+								</ui:include>
+							</rich:tab>
+						</rich:tabPanel>
+						<ui:include src="/WEB-INF/templates/warningErrorPanel.xhtml">
+							<ui:param name="bean" value="#{baseBean}" />
+						</ui:include>
+						<ui:include src="/WEB-INF/templates/loading.xhtml">
+							<ui:param name="bean" value="#{baseBean}" />
+						</ui:include>
+					</h:form>
+
+				</div>
+			</section>
+		</aside>
+		<br></br>
+	</ui:define>
+</ui:composition>

@@ -21,17 +21,17 @@
 				<ul class="list-unstyled">
 					<li>
 						<a4j:outputPanel rendered="#{baseBean.role == 'employee' || baseBean.role == 'admin'}">
-							<a href="/hrm/leave/leaveManagement.jsf"> <i class="fa fa-calendar"/>Leaves Management</a>
+							<a href="/HRM/leave/leaveManagement.jsf"> <i class="fa fa-calendar"/>Leaves Management</a>
 						</a4j:outputPanel>
 					</li>
 					<li>
 						<a4j:outputPanel rendered="#{baseBean.role == 'admin' || baseBean.role == 'hr' || baseBean.role == 'sys_admin'}">
-							<a href="/hrm/attendance/attendanceManagement.jsf"><i class="fa fa-calendar"/><span>Attendance Management</span></a>
+							<a href="/HRM/attendance/attendanceManagement.jsf"><i class="fa fa-calendar"/><span>Attendance Management</span></a>
 						</a4j:outputPanel>
 					</li>
 					<li>
 						<a4j:outputPanel>
-							<a href="/hrm/holidays/holidaysManagement.jsf"><i class="fa fa-calendar"/><span>Holidays Management</span></a>
+							<a href="/HRM/holidays/holidaysManagement.jsf"><i class="fa fa-calendar"/><span>Holidays Management</span></a>
 						</a4j:outputPanel>
 					</li>
 				</ul>
